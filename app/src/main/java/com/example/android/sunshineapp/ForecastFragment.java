@@ -2,8 +2,8 @@ package com.example.android.sunshineapp;
 
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -22,9 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 
 /**
@@ -74,6 +73,27 @@ public class ForecastFragment extends Fragment {
                 (getActivity(),R.layout.list_item_forecast,forecastArray);
 
         ListView listview = (ListView)rootView.findViewById(R.id.listview_forecast);
+
+        // Defining on click event listener for list view
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.v("OUTPUT","View which recieved the click"+view.toString());
+                Log.v("OUTPUT","Position/which list item recieved the click"+position);
+                Log.v("OUTPUT","Id of list item recieved the click"+id);
+                Log.v("OUTPUT", "Parent viww recieved the click" + parent.toString());
+                //To initialize a Toast maketext function should be used instead of the ctor.
+                String forecast = arrayAdapter.getItem(position);
+                Toast toast = Toast.makeText(getActivity().getApplicationContext(),forecast, Toast.LENGTH_SHORT);
+                toast.show();
+
+
+            }
+        });
+
+
+
+
         listview.setAdapter(arrayAdapter);
 
 

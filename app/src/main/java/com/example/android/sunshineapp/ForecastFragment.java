@@ -1,5 +1,6 @@
 package com.example.android.sunshineapp;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -84,8 +84,13 @@ public class ForecastFragment extends Fragment {
                 Log.v("OUTPUT", "Parent viww recieved the click" + parent.toString());
                 //To initialize a Toast maketext function should be used instead of the ctor.
                 String forecast = arrayAdapter.getItem(position);
-                Toast toast = Toast.makeText(getActivity().getApplicationContext(),forecast, Toast.LENGTH_SHORT);
-                toast.show();
+                /*Toast toast = Toast.makeText(getActivity().getApplicationContext(),forecast, Toast.LENGTH_SHORT);
+                toast.show();*/
+                // Here we use explicit intent to call the Detail Activity.
+                // Pass the forecast data to the activity.
+                Intent invokeDetailActivity = new Intent(getActivity(),DetailActivity.class).putExtra(Intent.EXTRA_TEXT,forecast);
+
+                startActivity(invokeDetailActivity);
 
 
             }

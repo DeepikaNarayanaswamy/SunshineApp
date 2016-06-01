@@ -6,6 +6,7 @@ package com.example.android.sunshineapp;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,6 +71,7 @@ public class ForecastAdapter extends CursorAdapter {
         // we'll keep the UI functional with a simple (and slow!) binding.
 
         TextView tv = (TextView)view;
+        Log.v("View","Setting text");
         tv.setText(convertCursorRowToUXFormat(cursor));
     }
 }

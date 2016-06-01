@@ -6,6 +6,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,13 +26,13 @@ import java.util.ArrayList;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class ForecastFragment extends Fragment {
+public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     ArrayAdapter<String> arrayAdapter;
     private ForecastAdapter mForecastAdapeter;
     public ForecastFragment() {
 
     }
-
+    private static final int WEATHER_LOADER = 1;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +66,7 @@ public class ForecastFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.v("Oncreateview","oncreateview");
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ArrayList<String> forecastArray = new ArrayList<>();
 /*
@@ -99,13 +103,13 @@ public class ForecastFragment extends Fragment {
 //            }
 //        });
 
-        String locationSetting = Utility.getPreferredLocation(getContext());
+    /*    String locationSetting = Utility.getPreferredLocation(getContext());
 
         Uri getWeatherLocationuri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(locationSetting, System.currentTimeMillis());
         String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
         Cursor cur = getContext().getContentResolver().query(getWeatherLocationuri,null,null,null,sortOrder);
-        mForecastAdapeter = new ForecastAdapter(getContext(),cur,0);
-        listview.setAdapter(mForecastAdapeter);
+    */    mForecastAdapeter = new ForecastAdapter(getContext(),null,0);
+          listview.setAdapter(mForecastAdapeter);
         return rootView;
     }
 
@@ -115,6 +119,14 @@ public class ForecastFragment extends Fragment {
         updateWeather();
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        Log.v("Onactivitycreated","activity created");
+
+
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(WEATHER_LOADER,null,this);
+    }
     // Async task 3 parameters : 1.Params, the type of the parameters sent to the task upon execution.
     //2.Progress, the type of the progress units published during the background computation.
     //3.Result, the type of the result of the background computation.
@@ -222,4 +234,33 @@ public class ForecastFragment extends Fragment {
             }
         }
     }*/
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        // Here the loader gets created with the loader id and the other URI parameters we use for content resolver
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_MAX_TEMP + " ASC";
+        String locationSetting = Utility.getPreferredLocation(getContext());
+        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
+                locationSetting, System.currentTimeMillis());
+        Log.v("Loader created!","Loader created");
+
+        Loader<Cursor> cursorLoader = new CursorLoader(getContext(),weatherForLocationUri,null,null,null,sortOrder);
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.i("Info DG ", "cursor data");
+        data.moveToFirst();
+            int colIndex = data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATE);
+            Log.v("Date value ",data.getString(colIndex));
+
+        mForecastAdapeter.swapCursor(data);
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mForecastAdapeter.swapCursor(null);
+    }
 }

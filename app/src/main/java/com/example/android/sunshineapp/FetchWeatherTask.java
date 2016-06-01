@@ -298,7 +298,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
                 }
 
             // Sort order:  Ascending, by date.
-            String sortOrder = WeatherEntry.COLUMN_DATE + " DESC";
+            String sortOrder = WeatherEntry.COLUMN_MAX_TEMP + " DESC";
             Uri weatherForLocationUri = WeatherEntry.buildWeatherLocationWithStartDate(
                     locationSetting, System.currentTimeMillis());
 

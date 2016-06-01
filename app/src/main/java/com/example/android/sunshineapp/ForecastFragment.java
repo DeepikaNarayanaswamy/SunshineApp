@@ -29,7 +29,26 @@ import java.util.ArrayList;
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     ArrayAdapter<String> arrayAdapter;
     private ForecastAdapter mForecastAdapeter;
-    public ForecastFragment() {
+    // For projection - choosing only few columns from the table
+    private static final String[] FORECAST_COLUMNS = {
+            // In this case the id needs to be fully qualified with a table name, since
+            // the content provider joins the location & weather tables in the background
+            // (both have an _id column)
+            // On the one hand, that's annoying.  On the other, you can search the weather table
+            // using the location set by the user, which is only in the Location table.
+            // So the convenience is worth it.
+            WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
+            WeatherContract.WeatherEntry.COLUMN_DATE,
+            WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
+            WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
+            WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
+            WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
+            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
+            WeatherContract.LocationEntry.COLUMN_COORD_LAT,
+            WeatherContract.LocationEntry.COLUMN_COORD_LONG
+    };
+
+     public ForecastFragment() {
 
     }
     private static final int WEATHER_LOADER = 1;
@@ -244,14 +263,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 locationSetting, System.currentTimeMillis());
         Log.v("Loader created!","Loader created");
 
-        Loader<Cursor> cursorLoader = new CursorLoader(getContext(),weatherForLocationUri,null,null,null,sortOrder);
+
+        Loader<Cursor> cursorLoader = new CursorLoader(getContext(),weatherForLocationUri,FORECAST_COLUMNS,null,null,sortOrder);
         return cursorLoader;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.i("Info DG ", "cursor data");
-        data.moveToFirst();
+            data.moveToFirst();
             int colIndex = data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATE);
             Log.v("Date value ",data.getString(colIndex));
 

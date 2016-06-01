@@ -1,5 +1,6 @@
 package com.example.android.sunshineapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -44,6 +45,8 @@ public class DetailActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent settingsActivity = new Intent(this, SettingsActivity.class);
+            startActivity(settingsActivity);
             return true;
         }
 

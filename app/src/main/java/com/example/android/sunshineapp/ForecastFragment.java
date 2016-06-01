@@ -1,9 +1,10 @@
 package com.example.android.sunshineapp;
 
-import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,18 +13,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import org.json.JSONException;
+import com.example.android.sunshineapp.data.WeatherContract;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -31,7 +25,9 @@ import java.util.ArrayList;
  */
 public class ForecastFragment extends Fragment {
     ArrayAdapter<String> arrayAdapter;
+    private ForecastAdapter mForecastAdapeter;
     public ForecastFragment() {
+
     }
 
     @Override
@@ -51,64 +47,78 @@ public class ForecastFragment extends Fragment {
         int id = R.id.action_refresh;
         if (id == item.getItemId()){
             Log.v("OUTPUT", "Pressed refresh button");
-            FetchWeatherTask fetchWeatherTask = new FetchWeatherTask();
-            fetchWeatherTask.execute("94043");
+            updateWeather();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void updateWeather(){
+        FetchWeatherTask fetchWeatherTask = new FetchWeatherTask(getActivity(),arrayAdapter);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = prefs.getString(getString(R.string.location_key),getString(R.string.location_value));
+        fetchWeatherTask.execute(location);
+
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ArrayList<String> forecastArray = new ArrayList<>();
+/*
         forecastArray.add("Today-Sunday-63");
         forecastArray.add("Tomorrow-Foggy-70/45");
         forecastArray.add("Weds-Cloudy-72/86");
         forecastArray.add("Thurs-Rainy-45/85");
         forecastArray.add("Fri-Rainy-45/85");
         forecastArray.add("Sat-Rainy-45/85");
-        arrayAdapter = new ArrayAdapter<String>
-                (getActivity(),R.layout.list_item_forecast,forecastArray);
+*/
+//        arrayAdapter = new ArrayAdapter<String>
+//                (getActivity(),R.layout.list_item_forecast,forecastArray);
 
         ListView listview = (ListView)rootView.findViewById(R.id.listview_forecast);
 
         // Defining on click event listener for list view
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.v("OUTPUT","View which recieved the click"+view.toString());
-                Log.v("OUTPUT","Position/which list item recieved the click"+position);
-                Log.v("OUTPUT","Id of list item recieved the click"+id);
-                Log.v("OUTPUT", "Parent viww recieved the click" + parent.toString());
-                //To initialize a Toast maketext function should be used instead of the ctor.
-                String forecast = arrayAdapter.getItem(position);
-                /*Toast toast = Toast.makeText(getActivity().getApplicationContext(),forecast, Toast.LENGTH_SHORT);
-                toast.show();*/
-                // Here we use explicit intent to call the Detail Activity.
-                // Pass the forecast data to the activity.
-                Intent invokeDetailActivity = new Intent(getActivity(),DetailActivity.class).putExtra(Intent.EXTRA_TEXT,forecast);
+//        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Log.v("OUTPUT","View which recieved the click"+view.toString());
+//                Log.v("OUTPUT","Position/which list item recieved the click"+position);
+//                Log.v("OUTPUT","Id of list item recieved the click"+id);
+//                Log.v("OUTPUT", "Parent viww recieved the click" + parent.toString());
+//                //To initialize a Toast maketext function should be used instead of the ctor.
+//                String forecast = arrayAdapter.getItem(position);
+//                /*Toast toast = Toast.makeText(getActivity().getApplicationContext(),forecast, Toast.LENGTH_SHORT);
+//                toast.show();*/
+//                // Here we use explicit intent to call the Detail Activity.
+//                // Pass the forecast data to the activity.
+//                Intent invokeDetailActivity = new Intent(getActivity(),DetailActivity.class).putExtra(Intent.EXTRA_TEXT, forecast);
+//
+//                startActivity(invokeDetailActivity);
+//
+//            }
+//        });
 
-                startActivity(invokeDetailActivity);
+        String locationSetting = Utility.getPreferredLocation(getContext());
 
-
-            }
-        });
-
-
-
-
-        listview.setAdapter(arrayAdapter);
-
-
-
+        Uri getWeatherLocationuri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(locationSetting, System.currentTimeMillis());
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+        Cursor cur = getContext().getContentResolver().query(getWeatherLocationuri,null,null,null,sortOrder);
+        mForecastAdapeter = new ForecastAdapter(getContext(),cur,0);
+        listview.setAdapter(mForecastAdapeter);
         return rootView;
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }
+
     // Async task 3 parameters : 1.Params, the type of the parameters sent to the task upon execution.
     //2.Progress, the type of the progress units published during the background computation.
     //3.Result, the type of the result of the background computation.
-    private  class FetchWeatherTask extends AsyncTask <String,Void,String []>
+ /*   private  class FetchWeatherTask extends AsyncTask <String,Void,String []>
     {
         private  static final String URL_PARAMETER_Q = "q";
         private static final String URL_PARAMETER_MODE = "mode";
@@ -123,7 +133,7 @@ public class ForecastFragment extends Fragment {
             // Will contain the raw JSON response as a string.
             String forecastJsonStr = null;
             String postCode = "94043";
-            Log.v("OUTPUT","ENTERING doINbackground method");
+            Log.v("OUTPUT", "ENTERING doINbackground method");
             try {
                 // Construct the URL for the OpenWeatherMap query
                 // Possible parameters are avaiable at OWM's forecast API page, at
@@ -197,6 +207,8 @@ public class ForecastFragment extends Fragment {
             return null;
         }
 
+
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -209,5 +221,5 @@ public class ForecastFragment extends Fragment {
                 arrayAdapter.add(strings[i]);
             }
         }
-    }
+    }*/
 }

@@ -1,5 +1,6 @@
 package com.example.android.sunshineapp;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -102,25 +104,30 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         ListView listview = (ListView)rootView.findViewById(R.id.listview_forecast);
 
         // Defining on click event listener for list view
-//        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Log.v("OUTPUT","View which recieved the click"+view.toString());
-//                Log.v("OUTPUT","Position/which list item recieved the click"+position);
-//                Log.v("OUTPUT","Id of list item recieved the click"+id);
-//                Log.v("OUTPUT", "Parent viww recieved the click" + parent.toString());
-//                //To initialize a Toast maketext function should be used instead of the ctor.
-//                String forecast = arrayAdapter.getItem(position);
-//                /*Toast toast = Toast.makeText(getActivity().getApplicationContext(),forecast, Toast.LENGTH_SHORT);
-//                toast.show();*/
-//                // Here we use explicit intent to call the Detail Activity.
-//                // Pass the forecast data to the activity.
-//                Intent invokeDetailActivity = new Intent(getActivity(),DetailActivity.class).putExtra(Intent.EXTRA_TEXT, forecast);
-//
-//                startActivity(invokeDetailActivity);
-//
-//            }
-//        });
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                if (cursor != null){
+                    String locationSetting = Utility.getPreferredLocation(getContext());
+
+                    Intent invokeDetailActivity = new Intent(getActivity(),DetailActivity.class).setData(WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(locationSetting,cursor.getLong(ForecastAdapter.COL_WEATHER_DATE)));
+                    startActivity(invokeDetailActivity);
+                }
+
+                //To initialize a Toast maketext function should be used instead of the ctor.
+                //String forecast = arrayAdapter.getItem(position);
+                /*Toast toast = Toast.makeText(getActivity().getApplicationContext(),forecast, Toast.LENGTH_SHORT);
+                toast.show();*/
+                // Here we use explicit intent to call the Detail Activity.
+                // Pass the forecast data to the activity.
+                /*
+                Intent invokeDetailActivity = new Intent(getActivity(),DetailActivity.class).putExtra(Intent.EXTRA_TEXT, forecast);
+                startActivity(invokeDetailActivity);
+                */
+            }
+        });
 
     /*    String locationSetting = Utility.getPreferredLocation(getContext());
 

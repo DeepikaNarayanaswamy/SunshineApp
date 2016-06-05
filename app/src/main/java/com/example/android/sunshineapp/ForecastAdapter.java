@@ -69,7 +69,7 @@ public class ForecastAdapter extends CursorAdapter {
 
     private String formatHighLows(double high, double low) {
         boolean isMetric = Utility.isMetric(mContext);
-        String highLowStr = Utility.formatTemperature(high, isMetric) + "/" + Utility.formatTemperature(low, isMetric);
+        String highLowStr = Utility.formatTemperature(mContext,high, isMetric) + "/" + Utility.formatTemperature(mContext,low, isMetric);
         return highLowStr;
     }
 
@@ -160,8 +160,8 @@ public class ForecastAdapter extends CursorAdapter {
         ViewHolder holder = (ViewHolder) view.getTag();
         holder.dateView.setText(date);
         holder.descriptionView.setText(forecast);
-        holder.highTempView.setText(Utility.formatTemperature(high, isMetric));
-        holder.lowTempView.setText(Utility.formatTemperature(low, isMetric));
+        holder.highTempView.setText(Utility.formatTemperature(context,high, isMetric));
+        holder.lowTempView.setText(Utility.formatTemperature(context,low, isMetric));
         holder.iconView.setImageResource(R.drawable.ic_notifications_black_24dp);
     }
 }

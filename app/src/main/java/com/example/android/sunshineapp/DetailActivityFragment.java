@@ -1,5 +1,6 @@
 package com.example.android.sunshineapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -87,11 +88,12 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         data.moveToFirst();
+        Context context = getContext();
         String date = Utility.formatDate(data.getLong(COL_WEATHER_DATE));
         String description = data.getString(COL_WEATHER_DESC);
-        boolean isMetric = Utility.isMetric(getContext());
-        String maxTemp = Utility.formatTemperature(data.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
-        String minTemp = Utility.formatTemperature(data.getDouble(COL_WEATHER_MIN_TEMP),isMetric);
+        boolean isMetric = Utility.isMetric(context);
+        String maxTemp = Utility.formatTemperature(context,data.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
+        String minTemp = Utility.formatTemperature(context,data.getDouble(COL_WEATHER_MIN_TEMP),isMetric);
 
         TextView textView = (TextView)getView().findViewById(R.id.detail_text);
         textView.setText(description + "|" +date + "|" +maxTemp+"/"+minTemp);

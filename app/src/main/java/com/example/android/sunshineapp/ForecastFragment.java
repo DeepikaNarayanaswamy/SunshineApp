@@ -264,7 +264,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // Here the loader gets created with the loader id and the other URI parameters we use for content resolver
-        String sortOrder = WeatherContract.WeatherEntry.COLUMN_MAX_TEMP + " ASC";
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
         String locationSetting = Utility.getPreferredLocation(getContext());
         Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
                 locationSetting, System.currentTimeMillis());

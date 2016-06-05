@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        // Initilize the location field to the default one in settings
+
     }
 
     @Override

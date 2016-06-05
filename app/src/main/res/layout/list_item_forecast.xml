@@ -1,8 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:id = "@+id/list_item_forecast_textview"
-    android:padding="10dp"
-    android:textSize="20sp" >
 
-</TextView>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/each_day_list">
+
+<ImageView
+    android:layout_width="20dp"
+    android:layout_height="10dp"
+    android:id="@+id/list_item_icon"
+    android:layout_weight="1"
+     />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="2">
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:id = "@+id/list_item_date_textview"
+
+    android:textSize="20sp" />
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:id = "@+id/list_item_forecast_textview"
+        android:textSize="20sp"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1">
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent" android:layout_height="match_parent"
+            android:id = "@+id/list_item_high_textview"
+            android:textSize="20sp"
+        />
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent" android:layout_height="match_parent"
+            android:id = "@+id/list_item_low_textview"
+            android:textSize="20sp"
+
+            />
+    </LinearLayout>
+</LinearLayout>
